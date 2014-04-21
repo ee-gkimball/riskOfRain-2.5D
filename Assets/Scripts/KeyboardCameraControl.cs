@@ -66,12 +66,12 @@ public class KeyboardCameraControl : MonoBehaviour
 	
 	
 	private string[] keyboardAxesNames;
-	private CharacterController cc;
+	private CharacterMotor cm;
 
 	void Start()
 	{
 		keyboardAxesNames = new string[] { keyboardHorizontalAxisName, keyboardVerticalAxisName};
-		cc = GetComponent<CharacterController>();
+		cm = GetComponent<CharacterMotor>();
 	}
 	
 	
@@ -96,22 +96,29 @@ public class KeyboardCameraControl : MonoBehaviour
 		if (verticalTranslation.isActivated())
 		{
 			float translateY = Input.GetAxis(keyboardAxesNames[(int)verticalTranslation.keyboardAxis]) * verticalTranslation.sensitivity;
-			cc.Move(transform.forward * translateY);
+			cm.inputMoveDirection = transform.forward * translateY;
+			//cc.Move(transform.forward * translateY);
 			//transform.Translate(0, translateY, 0);
 		}
 		if (horizontalTranslation.isActivated())
 		{
 			float translateX = Input.GetAxis(keyboardAxesNames[(int)horizontalTranslation.keyboardAxis]) * horizontalTranslation.sensitivity;
-			cc.Move(transform.right * translateX);
+			Debug.Log("X: "  + translateX);
+			cm.inputMoveDirection = transform.forward * translateX;
+			Debug.Log("In Control:" + cm.inputMoveDirection.ToString());
+			//cc.Move(transform.right * translateX);
 			//transform.Translate(translateX, 0, 0);
 		}
 		if (true)
 		{
 			float translateZ = Input.GetAxis(keyboardAxesNames[(int)depthTranslation.keyboardAxis]) * depthTranslation.sensitivity;
-			cc.Move(transform.forward * translateZ);
+			cm.inputMoveDirection = transform.forward * translateZ;
+			//cc.Move(transform.forward * translateZ);
 			//transform.Translate(0, 0, translateZ);
 		}
+
 		
-		
+		cm.inputJump = Input.GetKey(KeyCode.Space);
+
 	}
 }
