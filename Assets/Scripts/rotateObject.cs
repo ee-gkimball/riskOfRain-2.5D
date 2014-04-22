@@ -4,7 +4,7 @@ using System.Collections;
 public class rotateObject : MonoBehaviour {
 
 	public float speed;
-	public bool enabled;
+	public bool rotateEnabled;
 
 	// Use this for initialization
 	void Start () {
@@ -13,7 +13,7 @@ public class rotateObject : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (enabled)
+		if (rotateEnabled)
 			transform.Rotate(0, Time.deltaTime * speed, 0);
 	}
 }
