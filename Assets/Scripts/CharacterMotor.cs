@@ -199,7 +199,8 @@ public class CharacterMotor : MonoBehaviour
 	
 	private void UpdateFunction()
 	{
-		Debug.Log(inputMoveDirection.ToString());
+		if (!Input.GetKey (KeyCode.LeftAlt))
+			transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * movement.turnSpeed * Time.deltaTime);
 
 		// We copy the actual velocity into a temporary variable that we can manipulate.
 		Vector3 velocity = movement.velocity;

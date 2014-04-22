@@ -23,13 +23,10 @@ public class FPSInputController : MonoBehaviour
 
 		Vector3 directionVector;
 
-		if (Input.GetKey(KeyCode.LeftAlt)){
+		if (Input.GetKey(KeyCode.LeftAlt))
 			directionVector = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-		}
-		else{
+		else
 			directionVector = new Vector3(0, 0, Input.GetAxis("Vertical"));
-			transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * motor.movement.turnSpeed * Time.deltaTime);
-		}
 
 		if (directionVector != Vector3.zero)
 		{
@@ -50,6 +47,7 @@ public class FPSInputController : MonoBehaviour
 		}
 		
 		// Apply the direction to the CharacterMotor
+	
 		motor.inputMoveDirection = transform.rotation * directionVector;
 		motor.inputJump = Input.GetButton("Jump");
 	}
