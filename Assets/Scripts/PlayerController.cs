@@ -13,6 +13,12 @@ public class PlayerController : MonoBehaviour {
 	bool isShooting;
 	public float fireRate;
 	public int range;
+	public float basic_damage;
+	public float basic_knockback;
+	public float specialZ_damage;
+	public float specialZ_knockback;
+	public float specialC_damage;
+	public float specialC_knockback;
 	float shootTime;
 	public GameObject bulletDecal;
 	public DecalManager decalManager;
@@ -87,7 +93,10 @@ public class PlayerController : MonoBehaviour {
 		                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 		if(Physics.Raycast(weaponPosition, direction, out hit, range)){
-			decalManager.AddDecal(hit);
+			if(hit.transform.tag == "enemy")
+				hit.transform.SendMessage("TakeHit", new object[2]{basic_damage, basic_knockback});
+			else
+				decalManager.AddDecal(hit);
 		}
 
 		audio.pitch = Random.Range(0.9f, 1.1f); 
@@ -98,7 +107,10 @@ public class PlayerController : MonoBehaviour {
 		                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 		if(Physics.Raycast(weaponPosition, direction, out hit, range)){
-			decalManager.AddDecal(hit);
+			if(hit.transform.tag == "enemy")
+				hit.transform.SendMessage("TakeHit", new object[2]{basic_damage, basic_knockback});
+			else
+				decalManager.AddDecal(hit);
 		}
 
 		audio.pitch = Random.Range(0.9f, 1.1f); 
@@ -114,13 +126,14 @@ public class PlayerController : MonoBehaviour {
 
 		if(hit.Length > 0){
 			for (int i = 0; i < hit.Length; i++){
-				decalManager.AddDecal(hit[i]); 
-				Debug.Log(hit[i].ToString());
+				if(hit[i].transform.tag == "enemy")
+					hit[i].transform.SendMessage("TakeHit", new object[2]{specialZ_damage, specialZ_knockback});
+				else
+					decalManager.AddDecal(hit[i]);
 			}
 		}
 
 		audio.pitch = Random.Range(0.9f, 1.2f);
-		Debug.Log(audio.pitch);
 		audio.PlayOneShot(piercingFireSound);
 
 		yield return null;
@@ -138,7 +151,10 @@ public class PlayerController : MonoBehaviour {
 			                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 
 			if(Physics.Raycast(weaponPosition, direction, out hit, range)){
-				decalManager.AddDecal(hit);
+				if(hit.transform.tag == "enemy")
+					hit.transform.SendMessage("TakeHit", new object[2]{specialC_damage, specialC_knockback});
+				else
+					decalManager.AddDecal(hit);
 			}
 						
 			audio.pitch = Random.Range(0.9f, 1.1f); 
