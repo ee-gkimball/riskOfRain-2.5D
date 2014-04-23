@@ -72,9 +72,6 @@ public class Entity : MonoBehaviour {
 	void TakeHit(object[] args){
 		float dam =  (float)args[0];
 		float knockback = (float)args[1];
-
-		Debug.Log("Hit for: " + dam + " : " + knockback);
-
 		hitParticles.Emit (1);
 		hp -= dam;
 		been_hit = true;

@@ -141,7 +141,7 @@ public class PlayerController : MonoBehaviour {
 
 	IEnumerator SuppressiveFire(){
 		RaycastHit hit;		
-		weaponObject.GetComponent<WeaponFire>().PlaySpecialCAnimation(1.0f);
+		weaponObject.GetComponent<WeaponFire>().PlaySpecialCAnimation(0.8f);
 
 		for (int i = 0; i < 6; i++){
 			Vector3 direction = transform.forward;
@@ -158,7 +158,7 @@ public class PlayerController : MonoBehaviour {
 						
 			audio.pitch = Random.Range(0.9f, 1.1f); 
 			audio.PlayOneShot(suppressiveFireSound);
-			yield return new WaitForSeconds(0.13f);
+			yield return new WaitForSeconds(0.095f);
 		}
 
 
