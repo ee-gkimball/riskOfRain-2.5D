@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject weaponObject;
 	public AudioClip basicFireSound;
 	public AudioClip piercingFireSound;
+	public AudioClip suppressiveFireSound;
 	bool canShoot;
 	bool isShooting;
 	public float fireRate;
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour {
 
 	public float piercingShotCooldown;
 	private float piercingShotTimer;
+	public float suppressiveFireCooldown;
+	private float suppressiveFireTimer;
 
 	// Use this for initialization
 	void Start () {
@@ -41,6 +44,14 @@ public class PlayerController : MonoBehaviour {
 
 		if (piercingShotTimer > 0)
 			piercingShotTimer -= Time.deltaTime;
+
+		if (suppressiveFireTimer <= 0 && Input.GetKeyDown(KeyCode.C)){
+			StartCoroutine(SuppressiveFire());
+			suppressiveFireTimer = suppressiveFireCooldown;
+		}
+		
+		if (suppressiveFireTimer > 0)
+			suppressiveFireTimer -= Time.deltaTime;
 	}
 
 	void FixedUpdate(){
@@ -69,6 +80,9 @@ public class PlayerController : MonoBehaviour {
 	IEnumerator BasicShot(){
 		Vector3 direction = transform.forward;
 		RaycastHit hit;
+
+		
+		weaponObject.GetComponent<WeaponFire>().PlayBasicAnimation(0.3f);
 		direction = new Vector3(direction.x + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
@@ -90,10 +104,11 @@ public class PlayerController : MonoBehaviour {
 		audio.pitch = Random.Range(0.9f, 1.1f); 
 		audio.PlayOneShot(basicFireSound);
 
-		weaponObject.GetComponent<WeaponFire>().PlayBasicAnimation(60.0f / fireRate);
 	}
 
 	IEnumerator PiercingShot(){
+				weaponObject.GetComponent<WeaponFire>().PlaySpecialZAnimation(0.3f);
+
 		Vector3 direction = transform.forward;
 		RaycastHit[] hit = Physics.RaycastAll(weaponPosition, direction, range);
 
@@ -107,7 +122,30 @@ public class PlayerController : MonoBehaviour {
 		audio.pitch = Random.Range(0.9f, 1.2f);
 		Debug.Log(audio.pitch);
 		audio.PlayOneShot(piercingFireSound);
-		weaponObject.GetComponent<WeaponFire>().PlaySpecialZAnimation(60.0f / fireRate);
+
+		yield return null;
+	}
+
+	IEnumerator SuppressiveFire(){
+		RaycastHit hit;		
+		weaponObject.GetComponent<WeaponFire>().PlaySpecialCAnimation(1.0f);
+		yield return new WaitForSeconds(0.1667f);
+
+		for (int i = 0; i < 6; i++){
+			Vector3 direction = transform.forward;
+			direction = new Vector3(direction.x + (Random.Range(-spreadFactor, spreadFactor)),
+			                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
+			                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
+
+			if(Physics.Raycast(weaponPosition, direction, out hit, range)){
+				decalManager.AddDecal(hit);
+			}
+						
+			audio.pitch = Random.Range(0.9f, 1.1f); 
+			audio.PlayOneShot(basicFireSound);
+			yield return new WaitForSeconds(0.13f);
+		}
+
 
 		yield return null;
 	}
