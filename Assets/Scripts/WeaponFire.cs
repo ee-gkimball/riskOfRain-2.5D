@@ -81,9 +81,11 @@ public class WeaponFire : MonoBehaviour {
 			this.renderer.material.mainTexture = sprites[i];
 			yield return new WaitForSeconds(animationSpeed/sprites.Length);
 		}
+		
+		transform.localScale = basicXScale;
 		GetComponent<WeaponSway>().midpoint = idleMidpoint;
 		this.renderer.material.mainTexture = idleSprite;
-		transform.localScale = basicXScale;
+
 		running = false;
 	}
 

@@ -30,12 +30,14 @@ public class Entity : MonoBehaviour {
 	CharacterMotor motor;
 	float wander_time;
 	bool been_hit = false;
+	ParticleSystem hitParticles;
 
 	// Use this for initialization
 	void Start () {
 		player = GameObject.Find("Player");	
 		motor = GetComponent<CharacterMotor>();
 		motor.movement.maxForwardSpeed = speed;
+		hitParticles = GetComponent<ParticleSystem> ();
 	}
 	
 	// Update is called once per frame
@@ -73,6 +75,7 @@ public class Entity : MonoBehaviour {
 
 		Debug.Log("Hit for: " + dam + " : " + knockback);
 
+		hitParticles.Emit (1);
 		hp -= dam;
 		been_hit = true;
 		transform.LookAt(player.transform.position);
