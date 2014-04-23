@@ -5,6 +5,8 @@ public class WeaponFire : MonoBehaviour {
 
 	public Texture2D basicSpriteSheet;
 	public Texture2D specialZSpriteSheet;
+	public Texture2D[] basicSprites = new Texture2D[6];
+	public Texture2D[] specialZSprites = new Texture2D[4];
 	public Texture2D idleSprite;
 	public int basicFrames;
 	public int specialZFrames;
@@ -27,7 +29,7 @@ public class WeaponFire : MonoBehaviour {
 		if (running)
 			resetAnimation();
 		
-		StartCoroutine("playAnim", new object[2]{basicSpriteSheet, basicFrames});
+		StartCoroutine("playAnim", new object[1]{basicSprites});
 	}
 
 	public void PlaySpecialZAnimation(float speed){
@@ -35,12 +37,11 @@ public class WeaponFire : MonoBehaviour {
 		if (running)
 			resetAnimation();
 
-		StartCoroutine("playAnim", new object[2]{specialZSpriteSheet, specialZFrames});
+		//StartCoroutine("playAnim", new object[2]{specialZSpriteSheet, specialZFrames});
 	}
 
 	void resetAnimation(){
 		StopCoroutine("playAnim");
-		GetComponent<WeaponSway>().midpoint = -0.21f;
 		this.renderer.material.mainTexture = idleSprite;
 		renderer.material.SetTextureOffset("_MainTex", new Vector2(0,0));
 		renderer.material.SetTextureScale("_MainTex", new Vector2(1,1));
@@ -49,23 +50,12 @@ public class WeaponFire : MonoBehaviour {
 
 	IEnumerator playAnim(object[] args){
 		running = true;
-		Texture2D spriteSheet = (Texture2D)args[0];
-		float frames = (int)args[1];
-		Vector2 size = new Vector2(1.0f / frames, 1);
-		Vector2 offset = new Vector2(0, 0);
-		this.renderer.material.mainTexture = spriteSheet;
-		GetComponent<WeaponSway>().midpoint = -0.19f;
+		Texture2D[] sprites = (Texture2D[])args[0];
 
-		for (int i = 0; i < frames; i++){
-			offset = new Vector2(i * size.x, 0);
-			renderer.material.SetTextureOffset("_MainTex", offset);
-			renderer.material.SetTextureScale("_MainTex", size);		
-			yield return new WaitForSeconds(animationSpeed/frames);
+		for (int i = 0; i < sprites.Length; i++){	
+			this.renderer.material.mainTexture = sprites[i];
+			yield return new WaitForSeconds(animationSpeed/sprites.Length);
 		}
-
-		GetComponent<WeaponSway>().midpoint = -0.21f;
-		renderer.material.SetTextureOffset("_MainTex", new Vector2(0,0));
-		renderer.material.SetTextureScale("_MainTex", new Vector2(1,1));
 		this.renderer.material.mainTexture = idleSprite;
 		running = false;
 	}
