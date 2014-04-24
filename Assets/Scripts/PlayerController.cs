@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject bulletDecal;
 	public DecalManager decalManager;
 	public float spreadFactor = 0.02f;
+	public Light fireLight;
 
 	public float piercingShotCooldown;
 	private float piercingShotTimer;
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 		decalManager = GameObject.Find("DecalHolder").GetComponent<DecalManager>();
 		weaponObject = GameObject.Find("WeaponPlane");
+		fireLight = GameObject.Find("fireLight").GetComponent<Light>();
 		autoAimPosition = GameObject.Find("autoAim").transform;
 		shootTime = 60.0f / fireRate;
 	}
@@ -98,7 +100,7 @@ public class PlayerController : MonoBehaviour {
 		                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 		if(Physics.Raycast(weaponPosition, direction, out hit, range)){
-			if(hit.transform.tag == "enemy")
+			if(hit.transform.tag == "enemy" && !hit.transform.gameObject.GetComponent<Entity>().isDead)
 				hit.transform.SendMessage("TakeHit", new object[3]{basic_damage, basic_knockback, basic_stun});
 			else
 				decalManager.AddDecal(hit);
@@ -106,13 +108,18 @@ public class PlayerController : MonoBehaviour {
 
 		audio.pitch = Random.Range(0.9f, 1.1f); 
 		audio.PlayOneShot(basicFireSound);
-		yield return new WaitForSeconds(0.11f);
+		fireLight.enabled = true;
+		yield return new WaitForSeconds(0.01f);
+		fireLight.enabled = false;
 
+		yield return new WaitForSeconds(0.08f);
+
+		fireLight.enabled = true;
 		direction = new Vector3(direction.x + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 		if(Physics.Raycast(weaponPosition, direction, out hit, range)){
-			if(hit.transform.tag == "enemy")
+			if(hit.transform.tag == "enemy" && !hit.transform.gameObject.GetComponent<Entity>().isDead)
 				hit.transform.SendMessage("TakeHit", new object[3]{basic_damage, basic_knockback, basic_stun});
 			else
 				decalManager.AddDecal(hit);
@@ -120,6 +127,8 @@ public class PlayerController : MonoBehaviour {
 
 		audio.pitch = Random.Range(0.9f, 1.1f); 
 		audio.PlayOneShot(basicFireSound);
+		yield return new WaitForSeconds(0.01f);
+		fireLight.enabled = false;
 
 	}
 
@@ -131,7 +140,7 @@ public class PlayerController : MonoBehaviour {
 
 		if(hit.Length > 0){
 			for (int i = 0; i < hit.Length; i++){
-				if(hit[i].transform.tag == "enemy")
+				if(hit[i].transform.tag == "enemy" && !hit[i].transform.gameObject.GetComponent<Entity>().isDead)
 					hit[i].transform.SendMessage("TakeHit", new object[3]{specialZ_damage, specialZ_knockback, specialZ_stun});
 				else
 					decalManager.AddDecal(hit[i]);
@@ -155,7 +164,7 @@ public class PlayerController : MonoBehaviour {
 			                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 
 			if(Physics.Raycast(weaponPosition, direction, out hit, range)){
-				if(hit.transform.tag == "enemy")
+				if(hit.transform.tag == "enemy" && !hit.transform.gameObject.GetComponent<Entity>().isDead)
 					hit.transform.SendMessage("TakeHit", new object[3]{specialC_damage, specialC_knockback, specialC_stun});
 				else
 					decalManager.AddDecal(hit);
@@ -163,7 +172,7 @@ public class PlayerController : MonoBehaviour {
 						
 			audio.pitch = Random.Range(0.9f, 1.1f); 
 			audio.PlayOneShot(suppressiveFireSound);
-			yield return new WaitForSeconds(0.095f);
+			yield return new WaitForSeconds(0.075f);
 		}
 
 

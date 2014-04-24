@@ -24,10 +24,11 @@ public class WeaponFire : MonoBehaviour {
 	public float specialZSpeed;
 	public float specialCSpeed;
 	private bool running;
+	public Light fireLight;
 
 	// Use this for initialization
 	void Start () {
-	
+		fireLight = transform.FindChild("fireLight").GetComponent<Light>();
 		idleMidpoint = GetComponent<WeaponSway>().midpoint;
 	}
 	

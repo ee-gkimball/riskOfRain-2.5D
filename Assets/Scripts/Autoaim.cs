@@ -19,6 +19,13 @@ public class Autoaim : MonoBehaviour {
 		GameObject closest_entity;
 
 		if (detected_entities.Count > 0){
+			foreach(GameObject entity in detected_entities)
+				if (entity.GetComponent<Entity>().isDead){
+					detected_entities.Remove(entity);
+					return;
+				}
+
+
 			closest_entity = detected_entities[0].gameObject;
 
 			for (int i = 0; i < detected_entities.Count; i++){
@@ -47,7 +54,7 @@ public class Autoaim : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider entity){
-		if (entity.tag == "enemy")
+		if (entity.tag == "enemy" && !entity.GetComponent<Entity>().isDead)
 			detected_entities.Add(entity.gameObject);
 	}
 

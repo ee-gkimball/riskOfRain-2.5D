@@ -13,6 +13,7 @@ public class Entity : MonoBehaviour {
 	public float critical_chance;
 	public float defense;
 	public float stun_time;
+	public GameObject sprite_plane;
 	public Texture2D sprite_idle;
 	public Texture2D sprite_walk;
 	public Texture2D sprite_jump;
@@ -32,6 +33,7 @@ public class Entity : MonoBehaviour {
 	float wander_time;
 	bool been_hit = false;
 	bool stunned = false;
+	public bool isDead;
 
 	ParticleSystem hitParticles;
 
@@ -41,6 +43,7 @@ public class Entity : MonoBehaviour {
 		motor = GetComponent<CharacterMotor>();
 		motor.movement.maxForwardSpeed = speed;
 		hitParticles = GetComponent<ParticleSystem> ();
+		sprite_plane = transform.FindChild("spritePlane").gameObject;
 	}
 	
 	// Update is called once per frame
@@ -56,6 +59,18 @@ public class Entity : MonoBehaviour {
 			stun_time -= Time.deltaTime;
 			motor.inputMoveDirection = Vector3.zero;
 		}
+
+		if (hp <= 0){
+			isDead = true;
+			StartCoroutine(die());
+		}
+	}
+
+	IEnumerator die(){
+		this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+		sprite_plane.GetComponent<MeshRenderer>().material.color = Color.red;
+		yield return new WaitForSeconds(1.0f);
+		Destroy(this.gameObject);
 	}
 
 	void Basic_Move(){
