@@ -12,6 +12,7 @@ public class Entity : MonoBehaviour {
 	public float damage;
 	public float critical_chance;
 	public float defense;
+	public float stun_time;
 	public Texture2D sprite_idle;
 	public Texture2D sprite_walk;
 	public Texture2D sprite_jump;
@@ -30,6 +31,8 @@ public class Entity : MonoBehaviour {
 	CharacterMotor motor;
 	float wander_time;
 	bool been_hit = false;
+	bool stunned = false;
+
 	ParticleSystem hitParticles;
 
 	// Use this for initialization
@@ -42,11 +45,17 @@ public class Entity : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Vector3.Distance(transform.position, player.transform.position) < detection_range || been_hit){
-			Basic_Move();
+		if (stun_time <= 0){
+			if (Vector3.Distance(transform.position, player.transform.position) < detection_range || been_hit){
+				Basic_Move();
+			}
+			else if (Vector3.Distance(transform.position, player.transform.position) > detection_range)
+				Wander();
 		}
-		else if (Vector3.Distance(transform.position, player.transform.position) > detection_range)
-			Wander();
+		else{
+			stun_time -= Time.deltaTime;
+			motor.inputMoveDirection = Vector3.zero;
+		}
 	}
 
 	void Basic_Move(){
@@ -72,6 +81,7 @@ public class Entity : MonoBehaviour {
 	void TakeHit(object[] args){
 		float dam =  (float)args[0];
 		float knockback = (float)args[1];
+		stun_time = (float)args[2];
 		hitParticles.Emit (1);
 		hp -= dam;
 		been_hit = true;

@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 
 	public Texture2D weaponSprite;
+	public Transform autoAimPosition;
 	public Vector3 weaponPosition = new Vector3(0,0,0);
 	public GameObject weaponObject;
 	public AudioClip basicFireSound;
@@ -15,10 +16,13 @@ public class PlayerController : MonoBehaviour {
 	public int range;
 	public float basic_damage;
 	public float basic_knockback;
+	public float basic_stun;
 	public float specialZ_damage;
 	public float specialZ_knockback;
+	public float specialZ_stun;
 	public float specialC_damage;
 	public float specialC_knockback;
+	public float specialC_stun;
 	float shootTime;
 	public GameObject bulletDecal;
 	public DecalManager decalManager;
@@ -33,6 +37,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 		decalManager = GameObject.Find("DecalHolder").GetComponent<DecalManager>();
 		weaponObject = GameObject.Find("WeaponPlane");
+		autoAimPosition = GameObject.Find("autoAim").transform;
 		shootTime = 60.0f / fireRate;
 	}
 	
@@ -84,7 +89,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	IEnumerator BasicShot(){
-		Vector3 direction = transform.forward;
+		Vector3 direction = autoAimPosition.forward;
 		RaycastHit hit;
 
 		
@@ -94,7 +99,7 @@ public class PlayerController : MonoBehaviour {
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 		if(Physics.Raycast(weaponPosition, direction, out hit, range)){
 			if(hit.transform.tag == "enemy")
-				hit.transform.SendMessage("TakeHit", new object[2]{basic_damage, basic_knockback});
+				hit.transform.SendMessage("TakeHit", new object[3]{basic_damage, basic_knockback, basic_stun});
 			else
 				decalManager.AddDecal(hit);
 		}
@@ -108,7 +113,7 @@ public class PlayerController : MonoBehaviour {
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
 		if(Physics.Raycast(weaponPosition, direction, out hit, range)){
 			if(hit.transform.tag == "enemy")
-				hit.transform.SendMessage("TakeHit", new object[2]{basic_damage, basic_knockback});
+				hit.transform.SendMessage("TakeHit", new object[3]{basic_damage, basic_knockback, basic_stun});
 			else
 				decalManager.AddDecal(hit);
 		}
@@ -121,13 +126,13 @@ public class PlayerController : MonoBehaviour {
 	IEnumerator PiercingShot(){
 				weaponObject.GetComponent<WeaponFire>().PlaySpecialZAnimation(0.3f);
 
-		Vector3 direction = transform.forward;
+		Vector3 direction = autoAimPosition.forward;
 		RaycastHit[] hit = Physics.RaycastAll(weaponPosition, direction, range);
 
 		if(hit.Length > 0){
 			for (int i = 0; i < hit.Length; i++){
 				if(hit[i].transform.tag == "enemy")
-					hit[i].transform.SendMessage("TakeHit", new object[2]{specialZ_damage, specialZ_knockback});
+					hit[i].transform.SendMessage("TakeHit", new object[3]{specialZ_damage, specialZ_knockback, specialZ_stun});
 				else
 					decalManager.AddDecal(hit[i]);
 			}
@@ -151,7 +156,7 @@ public class PlayerController : MonoBehaviour {
 
 			if(Physics.Raycast(weaponPosition, direction, out hit, range)){
 				if(hit.transform.tag == "enemy")
-					hit.transform.SendMessage("TakeHit", new object[2]{specialC_damage, specialC_knockback});
+					hit.transform.SendMessage("TakeHit", new object[3]{specialC_damage, specialC_knockback, specialC_stun});
 				else
 					decalManager.AddDecal(hit);
 			}
