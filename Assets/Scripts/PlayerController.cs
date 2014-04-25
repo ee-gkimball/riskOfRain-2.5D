@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour {
 	public AudioClip suppressiveFireSound;
 	bool canShoot;
 	bool isShooting;
+	public bool isFiring;
 	public float fireRate;
 	public int range;
 	public float basic_damage;
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		Screen.lockCursor = true;
 		decalManager = GameObject.Find("DecalHolder").GetComponent<DecalManager>();
 		weaponObject = GameObject.Find("WeaponPlane");
 		fireLight = GameObject.Find("fireLight").GetComponent<Light>();
@@ -45,12 +47,12 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.LeftControl))
+		if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetMouseButtonDown(0))
 			isShooting = true;
-		if (Input.GetKeyUp(KeyCode.LeftControl))
+		if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetMouseButtonUp(0))
 			isShooting = false;
 
-		if (piercingShotTimer <= 0 && Input.GetKeyDown(KeyCode.Z)){
+		if (piercingShotTimer <= 0 && (Input.GetKeyDown(KeyCode.Z)) || Input.GetMouseButtonDown(1)){
 			StartCoroutine(PiercingShot());
 			piercingShotTimer = piercingShotCooldown;
 		}
@@ -58,7 +60,7 @@ public class PlayerController : MonoBehaviour {
 		if (piercingShotTimer > 0)
 			piercingShotTimer -= Time.deltaTime;
 
-		if (suppressiveFireTimer <= 0 && Input.GetKeyDown(KeyCode.C)){
+		if (suppressiveFireTimer <= 0 && (Input.GetKeyDown(KeyCode.C)) || Input.GetMouseButtonDown(2)){
 			StartCoroutine(SuppressiveFire());
 			suppressiveFireTimer = suppressiveFireCooldown;
 		}
@@ -90,12 +92,18 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
+	void OnMouseDown() {
+		Screen.lockCursor = true;
+	}
+
 	IEnumerator BasicShot(){
 		Vector3 direction = autoAimPosition.forward;
 		RaycastHit hit;
 
-		
+		isFiring = false;
 		weaponObject.GetComponent<WeaponFire>().PlayBasicAnimation(0.3f);
+		weaponObject.GetComponent<WeaponFire>().PlayMuzzleFlash(2, 0.11f, 0.01f, Color.yellow);
+
 		direction = new Vector3(direction.x + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
@@ -108,13 +116,9 @@ public class PlayerController : MonoBehaviour {
 
 		audio.pitch = Random.Range(0.9f, 1.1f); 
 		audio.PlayOneShot(basicFireSound);
-		fireLight.enabled = true;
-		yield return new WaitForSeconds(0.01f);
-		fireLight.enabled = false;
 
-		yield return new WaitForSeconds(0.08f);
+		yield return new WaitForSeconds(0.11f);
 
-		fireLight.enabled = true;
 		direction = new Vector3(direction.x + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 		                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
@@ -127,13 +131,15 @@ public class PlayerController : MonoBehaviour {
 
 		audio.pitch = Random.Range(0.9f, 1.1f); 
 		audio.PlayOneShot(basicFireSound);
-		yield return new WaitForSeconds(0.01f);
-		fireLight.enabled = false;
+		isFiring = false;
 
 	}
 
 	IEnumerator PiercingShot(){
-				weaponObject.GetComponent<WeaponFire>().PlaySpecialZAnimation(0.3f);
+		isFiring = true;
+
+		weaponObject.GetComponent<WeaponFire>().PlaySpecialZAnimation(0.3f);
+		weaponObject.GetComponent<WeaponFire>().PlayMuzzleFlash(1, 0.11f, 0.1f, Color.cyan);
 
 		Vector3 direction = autoAimPosition.forward;
 		RaycastHit[] hit = Physics.RaycastAll(weaponPosition, direction, range);
@@ -149,16 +155,21 @@ public class PlayerController : MonoBehaviour {
 
 		audio.pitch = Random.Range(0.9f, 1.2f);
 		audio.PlayOneShot(piercingFireSound);
-
-		yield return null;
+		
+		yield return new WaitForSeconds(0.4f);
+		isFiring = false;
 	}
 
 	IEnumerator SuppressiveFire(){
-		RaycastHit hit;		
+		isFiring = true;
+		RaycastHit hit;
+		
+		Vector3 direction = autoAimPosition.forward;
 		weaponObject.GetComponent<WeaponFire>().PlaySpecialCAnimation(0.8f);
+		weaponObject.GetComponent<WeaponFire>().PlayMuzzleFlash(6, 0.075f, 0.02f, Color.yellow);
 
 		for (int i = 0; i < 6; i++){
-			Vector3 direction = transform.forward;
+			direction = autoAimPosition.forward;
 			direction = new Vector3(direction.x + (Random.Range(-spreadFactor, spreadFactor)),
 			                        direction.y + (Random.Range(-spreadFactor, spreadFactor)),
 			                        direction.z + (Random.Range(-spreadFactor, spreadFactor)));
@@ -172,10 +183,10 @@ public class PlayerController : MonoBehaviour {
 						
 			audio.pitch = Random.Range(0.9f, 1.1f); 
 			audio.PlayOneShot(suppressiveFireSound);
-			yield return new WaitForSeconds(0.075f);
+			yield return new WaitForSeconds(0.085f);
 		}
 
-
-		yield return null;
+		yield return new WaitForSeconds(0.3f);
+		isFiring = false;
 	}
 }

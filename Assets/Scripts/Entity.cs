@@ -36,6 +36,7 @@ public class Entity : MonoBehaviour {
 	public bool isDead;
 
 	ParticleSystem hitParticles;
+	public Transform floatingHitPoints;
 
 	// Use this for initialization
 	void Start () {
@@ -48,7 +49,7 @@ public class Entity : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (stun_time <= 0){
+		if (stun_time <= 0 && !isDead){
 			if (Vector3.Distance(transform.position, player.transform.position) < detection_range || been_hit){
 				Basic_Move();
 			}
@@ -102,5 +103,16 @@ public class Entity : MonoBehaviour {
 		been_hit = true;
 		transform.LookAt(player.transform.position);
 		motor.movement.velocity = -transform.forward * knockback;
+
+		Vector3 floating_pos = Camera.main.WorldToViewportPoint(transform.position);
+		SpawnFloatPoints(dam, floating_pos.x, floating_pos.y);
+	}
+
+	void SpawnFloatPoints(float points, float x, float y){
+		x = Mathf.Clamp(x, 0.05f, 0.95f);
+		y = Mathf.Clamp(y, 0.05f, 0.9f);
+		Transform gui = (Transform)Instantiate(floatingHitPoints, new Vector3(x, y, 0), Quaternion.identity);
+		gui.GetComponent<FloatingDamage>().calling_transform = this.transform;
+		gui.guiText.text = points.ToString();
 	}
 }

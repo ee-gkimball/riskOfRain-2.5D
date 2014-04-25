@@ -22,11 +22,17 @@ public class FPSInputController : MonoBehaviour
 		// Get the input vector from kayboard or analog stick
 
 		Vector3 directionVector;
-
-		if (Input.GetKey(KeyCode.LeftAlt))
+		/*
+		if (true)//Input.GetKey(KeyCode.LeftAlt))
 			directionVector = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 		else
 			directionVector = new Vector3(0, 0, Input.GetAxis("Vertical"));
+			*/
+
+		if (!GetComponent<PlayerController>().isFiring)
+			directionVector = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+		else
+			directionVector = Vector3.zero;
 
 		if (directionVector != Vector3.zero)
 		{

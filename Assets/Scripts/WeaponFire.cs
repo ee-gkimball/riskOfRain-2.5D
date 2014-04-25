@@ -37,6 +37,10 @@ public class WeaponFire : MonoBehaviour {
 	
 
 	}
+	public void PlayMuzzleFlash(int number_flashes, float delay, float length, Color light_color){
+		fireLight.color = light_color;
+		StartCoroutine(muzzleFlash(number_flashes, delay, length));
+	}
 
 	public void PlayBasicAnimation(float speed){
 		if (running)
@@ -78,16 +82,28 @@ public class WeaponFire : MonoBehaviour {
 		running = true;
 		Texture2D[] sprites = (Texture2D[])args[0];
 
+		//this.renderer.material.shader = Shader.Find("Unlit/Transparent");
+
 		for (int i = 0; i < sprites.Length; i++){	
 			this.renderer.material.mainTexture = sprites[i];
 			yield return new WaitForSeconds(animationSpeed/sprites.Length);
 		}
-		
+		this.renderer.material.shader = Shader.Find("Transparent/Diffuse");
+
 		transform.localScale = basicXScale;
 		GetComponent<WeaponSway>().midpoint = idleMidpoint;
 		this.renderer.material.mainTexture = idleSprite;
 
 		running = false;
+	}
+
+	IEnumerator muzzleFlash(int num, float delay, float length){
+		for (int i = 0; i < num; i++){
+			fireLight.enabled = true;
+			yield return new WaitForSeconds(length);
+			fireLight.enabled = false;
+			yield return new WaitForSeconds(delay);
+		}
 	}
 
 }

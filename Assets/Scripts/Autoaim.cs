@@ -33,15 +33,12 @@ public class Autoaim : MonoBehaviour {
 				    <
 				    Vector3.Distance(this.transform.position, closest_entity.transform.position))
 					closest_entity = detected_entities[i];
-			}				
-			Debug.Log(closest_entity.GetComponent<Entity>().name);
-
+			}
 			Vector3 target = closest_entity.transform.position;
-			target.y = this.transform.position.y;
+			target.y = closest_entity.transform.position.y;
 
 			autoAimObject.transform.LookAt(target);
 			float angleDif = Quaternion.Angle(autoAimObject.transform.localRotation, Quaternion.Euler(new Vector3(0,0,0)));
-			Debug.Log(angleDif);
 			if (angleDif > assist_angle)
 				autoAimObject.transform.localRotation = Quaternion.Euler(new Vector3(0,0,0));
 
