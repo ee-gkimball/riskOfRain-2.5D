@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetMouseButtonUp(0))
 			isShooting = false;
 
-		if (piercingShotTimer <= 0 && (Input.GetKeyDown(KeyCode.Z)) || Input.GetMouseButtonDown(1)){
+		if (piercingShotTimer <= 0 && ((Input.GetKeyDown(KeyCode.Z)) || Input.GetMouseButtonDown(1))){
 			StartCoroutine(PiercingShot());
 			piercingShotTimer = piercingShotCooldown;
 		}
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour {
 		if (piercingShotTimer > 0)
 			piercingShotTimer -= Time.deltaTime;
 
-		if (suppressiveFireTimer <= 0 && (Input.GetKeyDown(KeyCode.C)) || Input.GetMouseButtonDown(2)){
+		if (suppressiveFireTimer <= 0 && ((Input.GetKeyDown(KeyCode.C)) || Input.GetMouseButtonDown(2))){
 			StartCoroutine(SuppressiveFire());
 			suppressiveFireTimer = suppressiveFireCooldown;
 		}
@@ -188,5 +188,9 @@ public class PlayerController : MonoBehaviour {
 
 		yield return new WaitForSeconds(0.3f);
 		isFiring = false;
+	}
+
+	public void TakeHit(float damage){
+		Debug.Log(damage);
 	}
 }

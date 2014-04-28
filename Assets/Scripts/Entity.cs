@@ -28,6 +28,9 @@ public class Entity : MonoBehaviour {
 	GameObject player;
 	public float detection_range;
 	public float attack_range;
+	public float attack_rate;
+	public bool is_attacking;
+	public float attack_timer;
 
 	CharacterMotor motor;
 	float wander_time;
@@ -37,6 +40,7 @@ public class Entity : MonoBehaviour {
 
 	ParticleSystem hitParticles;
 	public Transform floatingHitPoints;
+	public GameObject attackHitBox;
 
 	// Use this for initialization
 	void Start () {
@@ -45,21 +49,29 @@ public class Entity : MonoBehaviour {
 		motor.movement.maxForwardSpeed = speed;
 		hitParticles = GetComponent<ParticleSystem> ();
 		sprite_plane = transform.FindChild("spritePlane").gameObject;
+		attackHitBox = transform.FindChild("attackHitBox").gameObject;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (stun_time <= 0 && !isDead){
+		if (stun_time <= 0 && !isDead && !is_attacking){
 			if (Vector3.Distance(transform.position, player.transform.position) < detection_range || been_hit){
 				Basic_Move();
 			}
 			else if (Vector3.Distance(transform.position, player.transform.position) > detection_range)
 				Wander();
+
+			if (Vector3.Distance(transform.position, player.transform.position) <= attack_range
+			                          && !is_attacking && attack_timer <= 0)
+	        	StartCoroutine(attack());
 		}
 		else{
 			stun_time -= Time.deltaTime;
 			motor.inputMoveDirection = Vector3.zero;
 		}
+
+		if (attack_timer > 0)
+			attack_timer -= Time.deltaTime;
 
 		if (hp <= 0){
 			isDead = true;
@@ -74,9 +86,26 @@ public class Entity : MonoBehaviour {
 		Destroy(this.gameObject);
 	}
 
+	IEnumerator attack(){
+		motor.inputMoveDirection = Vector3.zero;
+		motor.movement.velocity = Vector3.zero;
+		is_attacking = true;
+		yield return new WaitForSeconds(0.4f);
+		if (attackHitBox.GetComponent<MeleeAttackBox>().detected_colliders.Contains(player))
+			player.GetComponent<PlayerController>().TakeHit(damage);
+
+		yield return new WaitForSeconds(0.5f);
+		attack_timer = attack_rate;
+		is_attacking = false;
+	}
+
 	void Basic_Move(){
-		transform.LookAt(player.transform.position);
-		motor.inputMoveDirection = transform.forward;
+		if (Vector3.Distance(transform.position, player.transform.position) <= attack_range)
+			motor.inputMoveDirection = transform.forward * 0.1f;
+		else{
+			transform.LookAt(player.transform.position);
+			motor.inputMoveDirection = transform.forward;
+		}
 	}
 
 	void Wander(){
