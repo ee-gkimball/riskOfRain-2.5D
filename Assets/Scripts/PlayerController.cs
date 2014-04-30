@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour {
 	public AudioClip basicFireSound;
 	public AudioClip piercingFireSound;
 	public AudioClip suppressiveFireSound;
+
 	bool canShoot;
 	bool isShooting;
 	public bool isFiring;
@@ -30,14 +31,18 @@ public class PlayerController : MonoBehaviour {
 	public float spreadFactor = 0.02f;
 	public Light fireLight;
 
-	public float piercingShotCooldown;
-	private float piercingShotTimer;
-	public float suppressiveFireCooldown;
-	private float suppressiveFireTimer;
+	public float specialZ_timer;
+	public float specialZ_cooldown;
+	public float specialC_timer;
+	public float specialC_cooldown;
+
+	public float hp;
+	public float hpMax;
+	public int current_level;
 
 	// Use this for initialization
 	void Start () {
-		Screen.lockCursor = true;
+		//Screen.lockCursor = true;
 		decalManager = GameObject.Find("DecalHolder").GetComponent<DecalManager>();
 		weaponObject = GameObject.Find("WeaponPlane");
 		fireLight = GameObject.Find("fireLight").GetComponent<Light>();
@@ -52,21 +57,21 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetMouseButtonUp(0))
 			isShooting = false;
 
-		if (piercingShotTimer <= 0 && ((Input.GetKeyDown(KeyCode.Z)) || Input.GetMouseButtonDown(1))){
+		if (specialZ_timer <= 0 && ((Input.GetKeyDown(KeyCode.Z)) || Input.GetMouseButtonDown(1))){
 			StartCoroutine(PiercingShot());
-			piercingShotTimer = piercingShotCooldown;
+			specialZ_timer = specialZ_cooldown;
 		}
 
-		if (piercingShotTimer > 0)
-			piercingShotTimer -= Time.deltaTime;
+		if (specialZ_timer > 0)
+			specialZ_timer -= Time.deltaTime;
 
-		if (suppressiveFireTimer <= 0 && ((Input.GetKeyDown(KeyCode.C)) || Input.GetMouseButtonDown(2))){
+		if (specialC_timer <= 0 && ((Input.GetKeyDown(KeyCode.C)) || Input.GetMouseButtonDown(2))){
 			StartCoroutine(SuppressiveFire());
-			suppressiveFireTimer = suppressiveFireCooldown;
+			specialC_timer = specialC_cooldown;
 		}
 		
-		if (suppressiveFireTimer > 0)
-			suppressiveFireTimer -= Time.deltaTime;
+		if (specialC_timer > 0)
+			specialC_timer -= Time.deltaTime;
 	}
 
 	void FixedUpdate(){
@@ -191,6 +196,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void TakeHit(float damage){
-		Debug.Log(damage);
+		hp -= damage;
 	}
 }

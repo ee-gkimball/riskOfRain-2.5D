@@ -24,6 +24,7 @@ public class Entity : MonoBehaviour {
 	public AudioClip sound_hit;
 	public AudioClip sound_death;
 	public AudioClip sound_attack;
+	public AudioClip sound_spawn;
 
 	GameObject player;
 	public float detection_range;
@@ -41,6 +42,8 @@ public class Entity : MonoBehaviour {
 	ParticleSystem hitParticles;
 	public Transform floatingHitPoints;
 	public GameObject attackHitBox;
+
+	bool inDeathCoroutine;
 
 	// Use this for initialization
 	void Start () {
@@ -73,7 +76,7 @@ public class Entity : MonoBehaviour {
 		if (attack_timer > 0)
 			attack_timer -= Time.deltaTime;
 
-		if (hp <= 0){
+		if (hp <= 0 && !isDead){
 			isDead = true;
 			StartCoroutine(die());
 		}
@@ -82,6 +85,7 @@ public class Entity : MonoBehaviour {
 	IEnumerator die(){
 		this.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
 		sprite_plane.GetComponent<MeshRenderer>().material.color = Color.red;
+		PlaySound("die");
 		yield return new WaitForSeconds(1.0f);
 		Destroy(this.gameObject);
 	}
@@ -94,6 +98,7 @@ public class Entity : MonoBehaviour {
 		if (attackHitBox.GetComponent<MeleeAttackBox>().detected_colliders.Contains(player))
 			player.GetComponent<PlayerController>().TakeHit(damage);
 
+		PlaySound("shoot");
 		yield return new WaitForSeconds(0.5f);
 		attack_timer = attack_rate;
 		is_attacking = false;
@@ -132,6 +137,7 @@ public class Entity : MonoBehaviour {
 		been_hit = true;
 		transform.LookAt(player.transform.position);
 		motor.movement.velocity = -transform.forward * knockback;
+		PlaySound("hit");
 
 		Vector3 floating_pos = Camera.main.WorldToViewportPoint(transform.position);
 		SpawnFloatPoints(dam, floating_pos.x, floating_pos.y);
@@ -143,5 +149,16 @@ public class Entity : MonoBehaviour {
 		Transform gui = (Transform)Instantiate(floatingHitPoints, new Vector3(x, y, 0), Quaternion.identity);
 		gui.GetComponent<FloatingDamage>().calling_transform = this.transform;
 		gui.guiText.text = points.ToString();
+	}
+
+	public void PlaySound(string name){
+		if (name == "spawn")
+			audio.PlayOneShot(sound_spawn);
+		else if (name == "hit")
+			audio.PlayOneShot(sound_hit);
+		else if (name == "shoot")
+			audio.PlayOneShot(sound_attack);
+		else if (name == "die")
+			audio.PlayOneShot(sound_death);
 	}
 }
