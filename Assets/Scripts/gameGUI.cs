@@ -39,7 +39,7 @@ public class gameGUI : MonoBehaviour {
 		GUI.skin = skin;
 		if (draw_hud){
 			//Overall hud
-			GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height), hud_texture);
+			//GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height), hud_texture);
 			GUI.DrawTexture(new Rect(Screen.width*0.33229f, Screen.height*0.9314f,
 			                         (Screen.width*0.33333f) * health_ratio, Screen.height*0.0333f), health_bar);
 			GUI.DrawTexture(new Rect(0,0, Screen.width, Screen.height), healthXp_base);
