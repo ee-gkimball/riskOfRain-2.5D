@@ -74,7 +74,7 @@ public class WeaponFire : MonoBehaviour {
 
 	void resetAnimation(){
 		StopCoroutine("playAnim");
-		this.renderer.material.mainTexture = idleSprite;
+		this.GetComponent<Renderer>().material.mainTexture = idleSprite;
 		running = false;
 	}
 
@@ -85,14 +85,14 @@ public class WeaponFire : MonoBehaviour {
 		//this.renderer.material.shader = Shader.Find("Unlit/Transparent");
 
 		for (int i = 0; i < sprites.Length; i++){	
-			this.renderer.material.mainTexture = sprites[i];
+			this.GetComponent<Renderer>().material.mainTexture = sprites[i];
 			yield return new WaitForSeconds(animationSpeed/sprites.Length);
 		}
-		this.renderer.material.shader = Shader.Find("Transparent/Diffuse");
+		this.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
 
 		transform.localScale = basicXScale;
 		GetComponent<WeaponSway>().midpoint = idleMidpoint;
-		this.renderer.material.mainTexture = idleSprite;
+		this.GetComponent<Renderer>().material.mainTexture = idleSprite;
 
 		running = false;
 	}

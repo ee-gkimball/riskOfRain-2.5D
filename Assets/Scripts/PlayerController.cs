@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour {
 		fireLight = GameObject.Find("fireLight").GetComponent<Light>();
 		autoAimPosition = GameObject.Find("autoAim").transform;
 		shootTime = 60.0f / fireRate;
+
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
 	}
 	
 	// Update is called once per frame
@@ -98,7 +101,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
-		Screen.lockCursor = true;
+
 	}
 
 	IEnumerator BasicShot(){
@@ -119,8 +122,8 @@ public class PlayerController : MonoBehaviour {
 				decalManager.AddDecal(hit);
 		}
 
-		audio.pitch = Random.Range(0.9f, 1.1f); 
-		audio.PlayOneShot(basicFireSound);
+		GetComponent<AudioSource>().pitch = Random.Range(0.9f, 1.1f); 
+		GetComponent<AudioSource>().PlayOneShot(basicFireSound);
 
 		yield return new WaitForSeconds(0.11f);
 
@@ -134,8 +137,8 @@ public class PlayerController : MonoBehaviour {
 				decalManager.AddDecal(hit);
 		}
 
-		audio.pitch = Random.Range(0.9f, 1.1f); 
-		audio.PlayOneShot(basicFireSound);
+		GetComponent<AudioSource>().pitch = Random.Range(0.9f, 1.1f); 
+		GetComponent<AudioSource>().PlayOneShot(basicFireSound);
 		isFiring = false;
 
 	}
@@ -158,8 +161,8 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		audio.pitch = Random.Range(0.9f, 1.2f);
-		audio.PlayOneShot(piercingFireSound);
+		GetComponent<AudioSource>().pitch = Random.Range(0.9f, 1.2f);
+		GetComponent<AudioSource>().PlayOneShot(piercingFireSound);
 		
 		yield return new WaitForSeconds(0.4f);
 		isFiring = false;
@@ -186,8 +189,8 @@ public class PlayerController : MonoBehaviour {
 					decalManager.AddDecal(hit);
 			}
 						
-			audio.pitch = Random.Range(0.9f, 1.1f); 
-			audio.PlayOneShot(suppressiveFireSound);
+			GetComponent<AudioSource>().pitch = Random.Range(0.9f, 1.1f); 
+			GetComponent<AudioSource>().PlayOneShot(suppressiveFireSound);
 			yield return new WaitForSeconds(0.085f);
 		}
 

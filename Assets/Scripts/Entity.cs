@@ -148,17 +148,17 @@ public class Entity : MonoBehaviour {
 		y = Mathf.Clamp(y, 0.05f, 0.9f);
 		Transform gui = (Transform)Instantiate(floatingHitPoints, new Vector3(x, y, 0), Quaternion.identity);
 		gui.GetComponent<FloatingDamage>().calling_transform = this.transform;
-		gui.guiText.text = points.ToString();
+		gui.GetComponent<GUIText>().text = points.ToString();
 	}
 
 	public void PlaySound(string name){
 		if (name == "spawn")
-			audio.PlayOneShot(sound_spawn);
+			GetComponent<AudioSource>().PlayOneShot(sound_spawn);
 		else if (name == "hit")
-			audio.PlayOneShot(sound_hit);
+			GetComponent<AudioSource>().PlayOneShot(sound_hit);
 		else if (name == "shoot")
-			audio.PlayOneShot(sound_attack);
+			GetComponent<AudioSource>().PlayOneShot(sound_attack);
 		else if (name == "die")
-			audio.PlayOneShot(sound_death);
+			GetComponent<AudioSource>().PlayOneShot(sound_death);
 	}
 }

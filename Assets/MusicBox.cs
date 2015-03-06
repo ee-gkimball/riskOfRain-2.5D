@@ -19,15 +19,15 @@ public class MusicBox : MonoBehaviour {
 	/// </summary>
 	/// <param name="track">Track you wish to play</param>
 	public void fadeInMusic(string track){
-		if (audio.isPlaying){
+		if (GetComponent<AudioSource>().isPlaying){
 			StartCoroutine(swapMusic(track));
 		}
 		else{
-			audio.clip = getTrack(track);
+			GetComponent<AudioSource>().clip = getTrack(track);
 			fadeIn = true;
 			fadeOut = false;
-			audio.loop = true;
-			audio.Play();
+			GetComponent<AudioSource>().loop = true;
+			GetComponent<AudioSource>().Play();
 		}
 	}
 	
@@ -49,9 +49,9 @@ public class MusicBox : MonoBehaviour {
 		fadeIn = false;
 		fadeOut = true;
 		yield return new WaitForSeconds(fadeSpeed);
-		audio.clip = getTrack(track);
-		audio.loop = true;
-		audio.Play();
+		GetComponent<AudioSource>().clip = getTrack(track);
+		GetComponent<AudioSource>().loop = true;
+		GetComponent<AudioSource>().Play();
 		fadeOut = false;
 		fadeIn = true;
 	}
@@ -65,15 +65,15 @@ public class MusicBox : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (fadeIn){
-			if (audio.volume < maxVolume)
-				audio.volume += fadeSpeed * Time.deltaTime;
+			if (GetComponent<AudioSource>().volume < maxVolume)
+				GetComponent<AudioSource>().volume += fadeSpeed * Time.deltaTime;
 		}
 		
 		if (fadeOut){
-			if (audio.volume > 0)
-				audio.volume -= fadeSpeed * Time.deltaTime;
+			if (GetComponent<AudioSource>().volume > 0)
+				GetComponent<AudioSource>().volume -= fadeSpeed * Time.deltaTime;
 			else
-				audio.Stop();
+				GetComponent<AudioSource>().Stop();
 		}
 	}
 }

@@ -18,10 +18,10 @@ public class WalkAroundPlanet : MonoBehaviour {
 	{
 		if (direction == 2 || direction == -1){
 			direction = -1;
-			this.renderer.material.mainTextureScale = new Vector2(1,1);
+			this.GetComponent<Renderer>().material.mainTextureScale = new Vector2(1,1);
 		}
 		else
-			this.renderer.material.mainTextureScale = new Vector2(-1,1);
+			this.GetComponent<Renderer>().material.mainTextureScale = new Vector2(-1,1);
 
 		transform.RotateAround(myGravity.position, Vector3.forward, velocity * direction * Time.deltaTime);
 

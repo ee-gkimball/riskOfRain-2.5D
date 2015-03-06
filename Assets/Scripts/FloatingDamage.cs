@@ -11,7 +11,7 @@ public class FloatingDamage : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		guiText.material.color = color;
+		GetComponent<GUIText>().material.color = color;
 		alpha = 1;
 	}
 	
@@ -22,7 +22,7 @@ public class FloatingDamage : MonoBehaviour {
 			                                 transform.position.y + scroll*Time.deltaTime,
 			                                 transform.position.z);
 			alpha -= Time.deltaTime/duration;
-			guiText.material.color = new Color(color.r, color.g, color.b, alpha);
+			GetComponent<GUIText>().material.color = new Color(color.r, color.g, color.b, alpha);
 		} else {
 			Destroy(gameObject); // text vanished - destroy itself
 		}
